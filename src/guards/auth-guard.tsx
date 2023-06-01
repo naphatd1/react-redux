@@ -1,29 +1,41 @@
-import { useState, useEffect } from 'react'
+import { useEffect } from 'react'
 import { getAuth, onAuthStateChanged } from 'firebase/auth'
 import { firebaseApp } from '../configs/firebase'
-import { Navigate } from 'react-router-dom'
-import DLayout from '../pages/dashboard/d-layout'
+import { Navigate, useNavigate } from 'react-router-dom'
+import { useAppDispatch, useAppSelector } from '../redux-toolkit/hooks'
+import { selectAuthState } from '../redux-toolkit/auth/auth-slice'
+import { getCurrentAccountThunk } from '../redux-toolkit/auth/auth-thunk'
+import { CircularProgress } from '@mui/material'
 
-const AuthGuard = () => {
+type AuthGuardPropType = {
+    children: React.ReactNode
+}
+
+
+const AuthGuard = (props: AuthGuardPropType) => {
     const auth = getAuth(firebaseApp)
-    const [account, setAccount] = useState<any>(null)
-    console.log(auth.currentUser?.email)
+    const navigate = useNavigate()
+    // const [account, setAccount] = useState<any>(null)
+    const { account, isAuthLoading } = useAppSelector(selectAuthState)
+    const dispatch = useAppDispatch()
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (user) => {
             if (user) {
-                setAccount(user)
+                dispatch(getCurrentAccountThunk(user.uid))
             } else {
-                setAccount(null)
+                navigate('/login')
             }
         })
         return () => unsubscribe()
     }, [])
-
+    if (isAuthLoading === true) {
+        return <CircularProgress />
+    }
     if (account == null) {
         return <Navigate to='/login' />
     }
     return (
-        <DLayout />
+        <>{props.children}</>
     )
 }
 

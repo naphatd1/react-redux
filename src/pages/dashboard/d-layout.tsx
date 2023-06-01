@@ -16,6 +16,7 @@ import { Outlet } from 'react-router-dom'
 
 import { MainListItems, SecondaryListItems } from './d-menu';
 import AccountMenu from './d-account-menu';
+import { withAuthGuard } from '../../hocs/with-auth-guard';
 
 const drawerWidth: number = 240;
 
@@ -152,6 +153,7 @@ function DashboardContent() {
   );
 }
 
-export default function DLayout() {
+function DLayout() {
   return <DashboardContent />
 }
+export default withAuthGuard(DLayout)
