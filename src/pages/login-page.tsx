@@ -17,6 +17,8 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from "yup";
 import YupPassword from 'yup-password'
 import { toast } from 'react-hot-toast';
+import { useAppDispatch } from '../redux-toolkit/hooks';
+import { getCurrentAccountThunk } from '../redux-toolkit/auth/auth-thunk';
 YupPassword(yup) // extend yup
 
 
@@ -37,6 +39,7 @@ function Copyright(props: any) {
 
 export default function LoginPage() {
   const navigate = useNavigate()
+  const dispatch = useAppDispatch()
   const schema = yup.object().shape({
     email: yup.string().required('ป้อนอีเมล์ด้วย').email('รูปแบบอีเมล์ไม่ถูกต้อง'),
     password: yup
@@ -58,6 +61,7 @@ export default function LoginPage() {
     try {
       const userCredential = await login(data.email, data.password!)
       if (userCredential.user != null) {
+        dispatch(getCurrentAccountThunk(userCredential.user.uid))
         toast.success('เข้าระบบสำเร็จ')
         navigate('/dashboard')
       }

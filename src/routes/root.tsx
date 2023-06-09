@@ -3,6 +3,7 @@ import HomePage from "../pages/home-page.tsx";
 import RegisterPage from "../pages/register-page.tsx";
 import routeDashboard from "./dashboard.tsx";
 import LoginPage from "../pages/login-page.tsx";
+import AuthGuard from "../guards/auth-guard.tsx";
 
 const router = createBrowserRouter([
     {
